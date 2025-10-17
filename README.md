@@ -28,7 +28,12 @@ Attachments (name -> base64_sample):
 {}
 
 Implementation hints:
-- Fallback: Echo the brief in an <h1> and include basic Bootstrap.
+CHECK: background is dark themed
+CHECK: snake is gradient colored, purple to blue
+CHECK: fruits are randomly colored
+CHECK: fruits are circular in shape
+CHECK: fruits are distinguishable from the snake
+CHECK: buttons are modern and minimalistic, with hover effects
 
 Important:
 - Include <!doctype html> and a <meta charset="utf-8">.
