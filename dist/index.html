@@ -6,95 +6,87 @@
     <title>Snake Game</title>
     <style>
         body {
-            background: #121212;
-            color: #ffffff;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             height: 100vh;
-            margin: 0;
+            background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
         canvas {
-            border: 2px solid #ffffff;
-            background: #1e1e1e;
+            border: 2px solid #333;
+            background-color: #fff;
         }
-        #controls {
+        .button {
             margin-top: 20px;
-        }
-        button {
-            background: transparent;
-            border: 2px solid #ffffff;
-            color: #ffffff;
             padding: 10px 20px;
-            margin: 0 5px;
+            font-size: 16px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background 0.3s, color 0.3s;
+            transition: background-color 0.3s;
         }
-        button:hover {
-            background: #ffffff;
-            color: #121212;
+        .button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <h1>Snake Game</h1>
-    <canvas id="snakeGame" width="400" height="400"></canvas>
-    <div id="controls">
-        <button id="startButton">Start</button>
-        <button id="resetButton">Reset</button>
+    <div>
+        <canvas id="tanmayhatkar240-canvas" width="400" height="400"></canvas>
+        <button id="tanmayhatkar240-start" class="button">Start Game</button>
     </div>
-
     <script>
-        const canvas = document.getElementById('snakeGame');
+        const canvas = document.getElementById('tanmayhatkar240-canvas');
         const ctx = canvas.getContext('2d');
         const box = 20;
         let snake = [{ x: 9 * box, y: 9 * box }];
-        let direction = '';
+        let direction;
         let fruit = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
         let score = 0;
+        let game;
 
         function draw() {
-            ctx.fillStyle = '#1e1e1e';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             for (let i = 0; i < snake.length; i++) {
-                ctx.fillStyle = `rgba(128, 0, 128, ${1 - i / snake.length})`;
+                ctx.fillStyle = `rgb(${(i * 255 / snake.length)}, 0, ${255 - (i * 255 / snake.length)})`;
                 ctx.fillRect(snake[i].x, snake[i].y, box, box);
             }
-
-            ctx.fillStyle = `hsl(${Math.random() * 360}, 100%, 50%)`;
-            ctx.beginPath();
-            ctx.arc(fruit.x + box / 2, fruit.y + box / 2, box / 2, 0, Math.PI * 2);
-            ctx.fill();
-
-            ctx.fillStyle = '#ffffff';
-            ctx.font = '20px Arial';
+            ctx.fillStyle = 'red';
+            ctx.fillRect(fruit.x, fruit.y, box, box);
+            ctx.fillStyle = 'black';
             ctx.fillText(`Score: ${score}`, box, box);
         }
 
         function update() {
-            if (direction === 'LEFT') snake[0].x -= box;
-            if (direction === 'UP') snake[0].y -= box;
-            if (direction === 'RIGHT') snake[0].x += box;
-            if (direction === 'DOWN') snake[0].y += box;
+            const head = { x: snake[0].x, y: snake[0].y };
 
-            if (snake[0].x === fruit.x && snake[0].y === fruit.y) {
+            if (direction === 'LEFT') head.x -= box;
+            if (direction === 'UP') head.y -= box;
+            if (direction === 'RIGHT') head.x += box;
+            if (direction === 'DOWN') head.y += box;
+
+            if (head.x === fruit.x && head.y === fruit.y) {
                 score++;
                 fruit = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
             } else {
                 snake.pop();
             }
 
-            if (snake[0].x < 0 || snake[0].y < 0 || snake[0].x >= canvas.width || snake[0].y >= canvas.height || collision(snake[0], snake)) {
+            if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height || collision(head, snake)) {
                 clearInterval(game);
-                alert('Game Over');
+                alert('Game Over! Your score: ' + score);
+                return;
             }
+
+            snake.unshift(head);
+            draw();
         }
 
         function collision(head, array) {
-            for (let i = 1; i < array.length; i++) {
+            for (let i = 0; i < array.length; i++) {
                 if (head.x === array[i].x && head.y === array[i].y) {
                     return true;
                 }
@@ -102,35 +94,21 @@
             return false;
         }
 
-        document.addEventListener('keydown', event => {
+        document.addEventListener('keydown', (event) => {
             if (event.key === 'ArrowLeft' && direction !== 'RIGHT') direction = 'LEFT';
             if (event.key === 'ArrowUp' && direction !== 'DOWN') direction = 'UP';
             if (event.key === 'ArrowRight' && direction !== 'LEFT') direction = 'RIGHT';
             if (event.key === 'ArrowDown' && direction !== 'UP') direction = 'DOWN';
         });
 
-        document.getElementById('startButton').addEventListener('click', () => {
-            if (typeof game !== 'undefined') clearInterval(game);
+        document.getElementById('tanmayhatkar240-start').addEventListener('click', () => {
             snake = [{ x: 9 * box, y: 9 * box }];
-            direction = '';
+            direction = null;
             score = 0;
             fruit = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
-            game = setInterval(() => {
-                update();
-                draw();
-            }, 100);
-        });
-
-        document.getElementById('resetButton').addEventListener('click', () => {
             clearInterval(game);
-            snake = [{ x: 9 * box, y: 9 * box }];
-            direction = '';
-            score = 0;
-            fruit = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box };
-            draw();
+            game = setInterval(update, 100);
         });
-
-        draw();
     </script>
 </body>
 </html>
